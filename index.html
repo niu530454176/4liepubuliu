@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<link rel="stylesheet" href="css/cssreset.css">
+	<style type="text/css">
+		.lie {
+			float: left;
+			width: 23%;
+			margin: 1%;
+		}
+
+		.lie img {
+			width: 100%;
+		}
+	</style>
+</head>
+<body>
+
+<div class="lie lie0"></div>
+<div class="lie lie1"></div>
+<div class="lie lie2"></div>
+<div class="lie lie3"></div>
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript">
+	var $html = $('html');
+	var $body = $('body');
+	var $win = $(window);
+
+	var index = 0;
+	var imgI = 0;
+	for (imgI; imgI <= 20; imgI++) {
+		var $img = $('<img>');
+		$img.attr('src', 'images/' + imgI + '.jpg');
+		var lieNum = imgI % 4;
+		$('.lie' + lieNum).append($img);
+	}
+
+	var isLoading = false;
+	$win.scroll(function () {
+//		console.log($win.scrollTop());
+//		console.log($win.height());
+//		console.log($html.height());
+		if(isLoading) {
+			return;
+		}
+		var isBottom = $win.scrollTop() > ($html.height() - $win.height() - 20);
+		if(isBottom) {
+			isLoading = true;
+			var end = imgI + 10;
+			appendOneImg();
+			function appendOneImg() {
+				if(imgI == end) {
+					isLoading = false;
+					console.log('停');
+					return;
+				}
+				if(imgI > 242) {
+					alert('已经没有图片了');
+					return;
+				}
+				var $img = $('<img>');
+				$img.attr('src', 'images/' + imgI + '.jpg');
+				var $minLie = null;
+				$('.lie').each(function (i, n) {
+					var $n = $(n);
+					if($minLie == null) {
+						$minLie = $n;
+					} else {
+						if($n.height() < $minLie.height()) {
+							$minLie = $n;
+						}
+					}
+				});
+				$img.load(function () {
+					appendOneImg();
+				});
+				$img.error(function () {
+					$(this).remove();
+					appendOneImg();
+				});
+				$minLie.append($img);
+				imgI++;
+			}
+		}
+	});
+</script>
+</body>
+</html>
